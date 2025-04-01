@@ -26,7 +26,7 @@ async function Tick() {
     while (true) {
         ctx.clearRect(0, 0, Canvas.width, Canvas.height);
         enemys.forEach(element => {
-            if (element.MoveTowardsPoint(Canvas.width / 2, Canvas.height / 2))
+            if (element.MoveTowardsPoint(Canvas.width / 2, Canvas.height / 2, 50))
                 bIsItGameOver = true;
         });
         if (bIsItGameOver)

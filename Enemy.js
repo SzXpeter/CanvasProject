@@ -27,8 +27,8 @@ export default class Enemy extends CanvasElement {
         this.Draw();
     }
 
-    MoveTowardsPoint(targetX, targetY) {
-        if (Math.abs(targetX - this.x) < 50 && Math.abs(targetY - this.y) < 50) return true;
+    MoveTowardsPoint(targetX, targetY, acceptance ) {
+        if (acceptance && Math.abs(targetX - this.x) < 50 && Math.abs(targetY - this.y) < 50) return true;
 
         const angleToPoint = Math.atan2(targetY - this.y, targetX - this.x);
 
