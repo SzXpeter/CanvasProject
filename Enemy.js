@@ -1,8 +1,7 @@
-export default class Enemy{
-    constructor(canvas, ctx, canvasElement, speed, damage) {
-        this.Canvas = canvas;
-        this.ctx = ctx;
-        this.CanvasElement = canvasElement;
+import CanvasElement from "./CanvasElement.js";
+export default class Enemy extends CanvasElement {
+    constructor(canvas, ctx, drawFunction, speed, damage) {
+        super(canvas, ctx, drawFunction);
         this.Speed = speed;
         this.Damage = damage;
     }
@@ -10,46 +9,37 @@ export default class Enemy{
     SpawnEnemy() {
         const random = Math.random();
         if (random >= .75) {
-            this.CanvasElement.x = 0;
-            this.CanvasElement.y = Math.floor(Math.random() * this.Canvas.height);
+            this.x = 0;
+            this.y = Math.floor(Math.random() * this.Canvas.height);
         }
         else if (random >= .5) {
-            this.CanvasElement.x = this.Canvas.width;
-            this.CanvasElement.y = Math.floor(Math.random() * this.Canvas.height);
+            this.x = this.Canvas.width;
+            this.y = Math.floor(Math.random() * this.Canvas.height);
         }
         else if (random >= .25) {
-            this.CanvasElement.x = Math.floor(Math.random() * this.Canvas.width);
-            this.CanvasElement.y = 0;
+            this.x = Math.floor(Math.random() * this.Canvas.width);
+            this.y = 0;
         }
         else {
-            this.CanvasElement.x = Math.floor(Math.random() * this.Canvas.width);
-            this.CanvasElement.y = this.Canvas.height;
+            this.x = Math.floor(Math.random() * this.Canvas.width);
+            this.y = this.Canvas.height;
         }
-            
-        this.CanvasElement.Draw(this.ctx);
-        this.rateX = this.Canvas.width / 2 - this.CanvasElement.x;
-        this.rateY = this.Canvas.height / 2 - this.CanvasElement.y;
+        this.Draw();
     }
 
-    CreepCloserToCenter() {
-        if (Math.abs(this.Canvas.width / 2 - this.CanvasElement.x) < 50 && Math.abs(this.Canvas.height / 2 - this.CanvasElement.y) < 50) return true;
+    MoveTowardsPoint(targetX, targetY) {
+        if (Math.abs(targetX - this.x) < 50 && Math.abs(targetY - this.y) < 50) return true;
 
-        let DefaultTime = 120;
+        const angleToPoint = Math.atan2(targetY - this.y, targetX - this.x);
 
-        const rateX = Math.abs(this.rateX / DefaultTime / 1000);
-        const rateY = Math.abs(this.rateY / DefaultTime / 1000);
+        const moveX = Math.cos(angleToPoint) * this.Speed;
+        const moveY = Math.sin(angleToPoint) * this.Speed;
 
-        if (this.CanvasElement.x > this.Canvas.width / 2)
-            this.CanvasElement.x -= (this.Canvas.width / 2 * this.Speed * rateX);
-        else
-            this.CanvasElement.x += (this.Canvas.width / 2 * this.Speed * rateX);
+        this.x += moveX;
+        this.y += moveY;
 
-        if (this.CanvasElement.y > this.Canvas.height / 2)
-            this.CanvasElement.y -= (this.Canvas.width / 2 * this.Speed * rateY);
-        else
-            this.CanvasElement.y += (this.Canvas.width / 2 * this.Speed * rateY);
-
-        this.CanvasElement.Draw(this.ctx);
-        return false;   
+        this.Rotate = angleToPoint * (180 / Math.PI) + 90;
+        this.Draw(this.ctx);
+        return false;
     }
 }
