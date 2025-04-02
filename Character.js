@@ -1,7 +1,8 @@
 import CanvasElement from "./CanvasElement.js";
+
 export default class Character extends CanvasElement {
-    constructor(canvas, ctx, drawFunction, speed, health) {
-        super(canvas, ctx, drawFunction);
+    constructor(canvas, ctx, speed, health) {
+        super(canvas, ctx);
         this.Speed = speed;
         this.Health = health;
     }
@@ -12,24 +13,24 @@ export default class Character extends CanvasElement {
         this.Draw();
     }
 
-    MoveTowardsPoint(targetX, targetY, acceptance = 10) {
+    MoveTowardsPoint(targetX, targetY, acceptance = 10, deltaTime = 16.66667) {
         if (Math.abs(targetX - this.x) < acceptance && Math.abs(targetY - this.y) < acceptance) {
             this.Draw();
             return true;
         } 
-
-        const angleToPoint = Math.atan2(targetY - this.y, targetX - this.x);
-
-        const moveX = Math.cos(angleToPoint) * this.Speed;
-        const moveY = Math.sin(angleToPoint) * this.Speed;
-
         this.Clear();
 
-        this.x += moveX;
-        this.y += moveY;
-
-        this.Rotate = angleToPoint * (180 / Math.PI) + 90;
+        this.x += this.moveX * (deltaTime / 1000);
+        this.y += this.moveY * (deltaTime / 1000);
+        this.Rotate = this.angleToPoint * (180 / Math.PI) + 90;        
+        
         this.Draw();
         return false;
+    }
+    
+    CalculateTargetAngle(targetX, targetY) {
+        this.angleToPoint = Math.atan2(targetY - this.y, targetX - this.x);
+        this.moveX = Math.cos(this.angleToPoint) * this.Speed * 50;
+        this.moveY = Math.sin(this.angleToPoint) * this.Speed * 50;
     }
 }
