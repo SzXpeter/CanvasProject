@@ -12,8 +12,8 @@ export default class Character extends CanvasElement {
         this.Draw();
     }
 
-    MoveTowardsPoint(targetX, targetY, acceptance) {
-        if (acceptance && Math.abs(targetX - this.x) < acceptance && Math.abs(targetY - this.y) < acceptance) {
+    MoveTowardsPoint(targetX, targetY, acceptance = 10) {
+        if (Math.abs(targetX - this.x) < acceptance && Math.abs(targetY - this.y) < acceptance) {
             this.Draw();
             return true;
         } 

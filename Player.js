@@ -22,7 +22,7 @@ export default class Player extends Character {
         if (this.pressedKeys.has('s')) y += this.Speed * 10; // Move down
         if (this.pressedKeys.has('d')) x += this.Speed * 10; // Move right
 
-        this.MoveTowardsPoint(x, y, 10);
+        this.MoveTowardsPoint(x, y);
     }
 
     Clear() {

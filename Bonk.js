@@ -5,7 +5,7 @@ export default class Bonk extends Enemy {
     }
 
     MoveTowardsPlayer(player) {
-        this.MoveTowardsPoint(player.x + (Math.random() - .5) * 20, player.y + (Math.random() - .5) * 20, 60);
+        this.MoveTowardsPoint(player.x, player.y, 70);
     }
     
     Clear() {
