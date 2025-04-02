@@ -1,44 +1,46 @@
-import CanvasElement from "./CanvasElement.js";
-import Enemy from "./Enemy.js";
+import Player from "./Player.js";
+import Bonk from "./Bonk.js";
 
 const Canvas = document.querySelector("canvas");
 const ctx = Canvas.getContext('2d');
 
-const enemys = [];
+const Enemys = [];
+const player = new Player(Canvas, ctx, DrawPlayer, 10, 100);
 
 BeginPlay();
 
 async function BeginPlay() {
-    for (let index = 0; index < 5; index++)
-        enemys.push(new Enemy(Canvas, ctx, DrawEnemy, 5, 1));    
-    
-    enemys.forEach(element => {
-        element.SpawnEnemy(Canvas, ctx);
-    });
-    
     ctx.clearRect(0, 0, Canvas.width, Canvas.height);
-    await new Promise(r => setTimeout(r, 2000));
+    player.SpawnCharacter(Canvas.width / 2, Canvas.height / 2);
+
+    Enemys.push(new Bonk(Canvas, ctx, DrawEnemy, 5, 100, 5));
+    Enemys.push(new Bonk(Canvas, ctx, DrawEnemy, 5, 100, 5));
+    Enemys.push(new Bonk(Canvas, ctx, DrawEnemy, 5, 100, 5));
+    Enemys.push(new Bonk(Canvas, ctx, DrawEnemy, 5, 100, 5));
+    Enemys.forEach(enemy => enemy.SpawnCharacter(Math.random() * Canvas.width, Math.random() * Canvas.height));
+
     Tick();
 };
 
 async function Tick() {
-    let bIsItGameOver = false;
     while (true) {
-        ctx.clearRect(0, 0, Canvas.width, Canvas.height);
-        enemys.forEach(element => {
-            if (element.MoveTowardsPoint(Canvas.width / 2, Canvas.height / 2, 50))
-                bIsItGameOver = true;
-        });
-        if (bIsItGameOver)
-            break;
-        await new Promise(r => setTimeout(r, 33.3333333));
+        Enemys.forEach(enemy => enemy.MoveTowardsPlayer(player));
+        player.MovePlayer();
+        await new Promise(r => setTimeout(r, 16.66666));
     }
 
     document.getElementById("gameover").style.display = "block";
     document.getElementById("gameover").style.animationName = "appear";
 }
 
-function DrawEnemy() {
+function DrawPlayer() {
     ctx.fillStyle = "purple";
+    ctx.fillRect(-30, -30, 60, 60);
+    ctx.fillStyle = "black";
+    ctx.fillRect(-20, -20, 40, 10);
+}
+
+function DrawEnemy() {
+    ctx.fillStyle = "red";
     ctx.fillRect(-25, -50, 50, 100);
 }

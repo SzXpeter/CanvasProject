@@ -3,8 +3,8 @@ export default class CanvasElement {
         this.Canvas = canvas;
         this.ctx = ctx;
         this.DrawFunction = drawFunction;
-        this.x = x;
-        this.y = y;
+        this.x = Number.parseInt(x);
+        this.y = Number.parseInt(y);
         this.Rotate = rotate;
     }
 
@@ -14,4 +14,6 @@ export default class CanvasElement {
         this.DrawFunction();
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
+
+    Clear() { }
 }
