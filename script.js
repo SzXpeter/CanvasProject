@@ -42,5 +42,7 @@ function DrawPlayer() {
 
 function DrawEnemy() {
     ctx.fillStyle = "red";
-    ctx.fillRect(-25, -50, 50, 100);
+    ctx.fillRect(-25, -25, 50, 50);
+    ctx.fillStyle = "black";
+    ctx.fillRect(-20, -20, 40, 10);
 }
