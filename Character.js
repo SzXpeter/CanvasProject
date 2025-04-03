@@ -17,12 +17,12 @@ export default class Character extends CanvasElement {
         if (Math.abs(targetX - this.x) < acceptance && Math.abs(targetY - this.y) < acceptance) {
             this.Draw();
             return true;
-        } 
+        }
         this.Clear();
 
         this.x += this.moveX * (deltaTime / 1000);
         this.y += this.moveY * (deltaTime / 1000);
-        this.Rotate = this.angleToPoint * (180 / Math.PI) + 90;        
+        this.Rotate = this.CalculateRotation();
         
         this.Draw();
         return false;
@@ -30,7 +30,11 @@ export default class Character extends CanvasElement {
     
     CalculateTargetAngle(targetX, targetY) {
         this.angleToPoint = Math.atan2(targetY - this.y, targetX - this.x);
-        this.moveX = Math.cos(this.angleToPoint) * this.Speed * 50;
-        this.moveY = Math.sin(this.angleToPoint) * this.Speed * 50;
+        this.moveX = Math.cos(this.angleToPoint) * this.Speed;
+        this.moveY = Math.sin(this.angleToPoint) * this.Speed;
+    }
+
+    CalculateRotation() {
+        return this.angleToPoint * (180 / Math.PI) + 90;
     }
 }

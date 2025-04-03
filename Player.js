@@ -7,10 +7,16 @@ export default class Player extends Character {
 
         window.addEventListener('keydown', (event) => this.pressedKeys.add(event.key));
         window.addEventListener('keyup', (event) => this.pressedKeys.delete(event.key));
+        window.addEventListener('mousemove', (event) => {
+            this.Clientx = event.clientX;
+            this.Clienty = event.clientY;
+        });
     }
 
     MovePlayer(deltaTime = 16.66667) {
         if (this.pressedKeys.size === 0) {
+            this.Clear();
+            this.Rotate = this.CalculateRotation();
             this.Draw();
             return;
         }
@@ -38,5 +44,12 @@ export default class Player extends Character {
         this.ctx.fillRect(-30, -30, 60, 60);
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(-20, -20, 40, 10);
+    }
+
+    CalculateRotation() {
+        const rect = this.Canvas.getBoundingClientRect();
+        const mouseX = this.Clientx - rect.left;
+        const mouseY = this.Clienty - rect.top;
+        return Math.atan2(mouseY - this.y, mouseX - this.x) * (180 / Math.PI) + 90;
     }
 }
