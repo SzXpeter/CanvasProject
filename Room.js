@@ -6,14 +6,18 @@ export default class Room {
         this.CellHeight = canvas.height / grid.length;
 
         this.Grid = [];
+        this.WallsX = [];
+        this.WallsY = [];
         grid.forEach((element, i) => {
             this.Grid.push([]);
             for (let j = 0; j < element.length; j++) {
                 this.Grid[i].push(parseInt(grid[i][j]));
+                if (this.Grid[i][j] === 1) {
+                    this.WallsX.push(j);
+                    this.WallsY.push(i);
+                }
             }
         });
-        console.log(this.Grid);
-        
     }
     
     DrawRoom() {
@@ -28,17 +32,17 @@ export default class Room {
     }
 
     IsCollidingWithWall(x, y, collisionRadius) {
-        const left = Math.floor((x - collisionRadius) / this.CellWidth);
-        const right = Math.floor((x + collisionRadius) / this.CellWidth);
-        const top = Math.floor((y - collisionRadius) / this.CellHeight);
-        const bottom = Math.floor((y + collisionRadius) / this.CellHeight);
+        const Left = Math.floor((x - collisionRadius) / this.CellWidth);
+        const Right = Math.floor((x + collisionRadius) / this.CellWidth);
+        const Top = Math.floor((y - collisionRadius) / this.CellHeight);
+        const Bottom = Math.floor((y + collisionRadius) / this.CellHeight);
 
-        for (let row = top; row <= bottom; row++) {
-            for (let col = left; col <= right; col++) {
-                if (this.Grid[row] && this.Grid[row][col] === 1) {
-                    return true;
+        for (let row = Top; row <= Bottom; row++) {
+            if (this.Grid[row] && this.Grid[row].includes(1))
+                for (let col = Left; col <= Right; col++) {
+                    if (this.Grid[row][col] === 1)
+                        return true;
                 }
-            }
         }
         return false;
     }

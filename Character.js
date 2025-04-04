@@ -21,13 +21,18 @@ export default class Character extends CanvasElement {
         }
         this.Clear();
     
-        const NextX = this.x + this.MoveX * (deltaTime / 1000);
-        const NextY = this.y + this.MoveY * (deltaTime / 1000);
-    
-        if (!this.IsCollidingHorizontally(room, NextX, otherCharacters))
-            this.x = NextX;
-        if (!this.IsCollidingVertically(room, NextY, otherCharacters))
-            this.y = NextY;
+        let NextX = this.MoveX * (deltaTime / 1000);
+        let NextY = this.MoveY * (deltaTime / 1000);
+        let CollidingX = this.IsCollidingHorizontally(room, this.x + NextX, otherCharacters);
+        let CollidingY = this.IsCollidingVertically(room, this.y + NextY, otherCharacters);
+
+        if (CollidingX)
+            NextX = 0;
+        if (CollidingY)
+            NextY = 0;
+        
+        this.x += CollidingX ? 0 : NextX;
+        this.y += CollidingY ? 0 : NextY;
     
         this.Rotate = this.CalculateRotation();
         this.Draw();
@@ -35,6 +40,9 @@ export default class Character extends CanvasElement {
     }
 
     IsCollidingHorizontally(room, nextX, otherCharacters) {
+        if (nextX < this.CollisionRadius || nextX > this.Canvas.width - this.CollisionRadius)
+            return true;
+
         if (room.IsCollidingWithWall(nextX, this.y, this.CollisionRadius))
             return true;
 
@@ -45,6 +53,9 @@ export default class Character extends CanvasElement {
     }
 
     IsCollidingVertically(room, nextY, otherCharacters) {
+        if (nextY < this.CollisionRadius || nextY > this.Canvas.height - this.CollisionRadius)
+            return true;
+
         if (room.IsCollidingWithWall(this.x, nextY, this.CollisionRadius))
             return true;
 
@@ -55,9 +66,13 @@ export default class Character extends CanvasElement {
     }
     
     CalculateTargetAngle(targetX, targetY) {
-        this.angleToPoint = Math.atan2(targetY - this.y, targetX - this.x);
-        this.MoveX = Math.cos(this.angleToPoint) * this.Speed;
-        this.MoveY = Math.sin(this.angleToPoint) * this.Speed;
+        const angleToPoint = Math.atan2(targetY - this.y, targetX - this.x);
+
+        this.angleX = Math.round(Math.cos(angleToPoint) * 10 ** 2) / 10 ** 2;
+        this.angleY = Math.round(Math.sin(angleToPoint) * 10 ** 2) / 10 ** 2; 
+
+        this.MoveX = this.angleX * this.Speed;
+        this.MoveY = this.angleY * this.Speed;
     }
 
     CalculateRotation() {
@@ -69,5 +84,18 @@ export default class Character extends CanvasElement {
         const dy = nextY - otherCharacter.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         return distance < (otherCharacter.CollisionRadius + this.CollisionRadius);
+    }
+
+    Clear() {
+        this.ctx.save();
+        this.ctx.translate(this.x, this.y)
+        this.ctx.rotate(Math.PI / 180 * this.Rotate);
+        
+        this.ctx.beginPath();
+        this.ctx.arc(0, 0, this.CollisionRadius, 0, Math.PI * 2);
+        this.ctx.clip();
+        this.ctx.clearRect(-this.CollisionRadius + 1, -this.CollisionRadius + 1, this.CollisionRadius * 2 - 2, this.CollisionRadius * 2 - 2);    
+        
+        this.ctx.restore();
     }
 }

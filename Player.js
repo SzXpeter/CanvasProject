@@ -13,7 +13,7 @@ export default class Player extends Character {
         });
     }
 
-    MovePlayer(deltaTime = 16.66667, room, otherCharacters = []) {
+    MovePlayer(deltaTime = 16.66667, room) {
         if (this.pressedKeys.size === 0) {
             this.Clear();
             this.Rotate = this.CalculateRotation();
@@ -23,25 +23,21 @@ export default class Player extends Character {
         let x = this.x;
         let y = this.y;
 
-        if (this.pressedKeys.has('w')) y -= this.Speed * 50; // Move up
-        if (this.pressedKeys.has('a')) x -= this.Speed * 50; // Move left
-        if (this.pressedKeys.has('s')) y += this.Speed * 50; // Move down
-        if (this.pressedKeys.has('d')) x += this.Speed * 50; // Move right
+        if (this.pressedKeys.has('w')) y -= this.Speed * 50;
+        if (this.pressedKeys.has('a')) x -= this.Speed * 50;
+        if (this.pressedKeys.has('s')) y += this.Speed * 50;
+        if (this.pressedKeys.has('d')) x += this.Speed * 50;
 
         this.CalculateTargetAngle(x, y);
         this.MoveTowardsPoint(x, y, 10, deltaTime, room);
     }
 
-    Clear() {
-        this.ctx.translate(this.x, this.y)
-        this.ctx.rotate(Math.PI / 180 * this.Rotate);
-        this.ctx.clearRect(-31, -31, 62, 62);
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
-    }
-
     DrawCharacter() {
         this.ctx.fillStyle = "purple";
-        this.ctx.fillRect(-30, -30, 60, 60);
+        this.ctx.beginPath();
+        this.ctx.arc(0, 0, this.CollisionRadius - 2, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.closePath();
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(-20, -20, 40, 10);
     }
