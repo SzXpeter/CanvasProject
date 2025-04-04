@@ -2,11 +2,11 @@ import Enemy from "./Enemy.js";
 
 export default class Bonk extends Enemy {
     constructor (canvas, ctx, speed = 1, health = 100, damage = 5) {
-        super(canvas, ctx, speed, health, damage);
+        super(canvas, ctx, speed, health, damage, 36.7695);
     }
 
-    MoveTowardsPlayer(player, deltaTime) {
-        this.MoveTowardsPoint(player.x, player.y, 70, deltaTime);
+    MoveTowardsPlayer(player, deltaTime, room, otherCharacters) {
+        this.MoveTowardsPoint(player.x, player.y, 70, deltaTime, room, otherCharacters);
     }
     
     Clear() {

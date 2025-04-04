@@ -2,7 +2,7 @@ import Character from "./Character.js";
 
 export default class Player extends Character {
     constructor(canvas, ctx, speed = 1, health = 100) {
-        super(canvas, ctx, speed, health);
+        super(canvas, ctx, speed, health, 43.84);
         this.pressedKeys = new Set();
 
         window.addEventListener('keydown', (event) => this.pressedKeys.add(event.key));
@@ -13,7 +13,7 @@ export default class Player extends Character {
         });
     }
 
-    MovePlayer(deltaTime = 16.66667) {
+    MovePlayer(deltaTime = 16.66667, room, otherCharacters = []) {
         if (this.pressedKeys.size === 0) {
             this.Clear();
             this.Rotate = this.CalculateRotation();
@@ -29,7 +29,7 @@ export default class Player extends Character {
         if (this.pressedKeys.has('d')) x += this.Speed * 50; // Move right
 
         this.CalculateTargetAngle(x, y);
-        this.MoveTowardsPoint(x, y, 10, deltaTime);
+        this.MoveTowardsPoint(x, y, 10, deltaTime, room);
     }
 
     Clear() {
