@@ -13,7 +13,7 @@ export default class Player extends Character {
         });
     }
 
-    MovePlayer(deltaTime = 16.66667, room) {
+    MovePlayer(deltaTime = 16.66667, room, otherCharacters = []) {
         if (this.pressedKeys.size === 0) {
             this.Clear();
             this.Rotate = this.CalculateRotation();
@@ -29,7 +29,7 @@ export default class Player extends Character {
         if (this.pressedKeys.has('d')) x += this.Speed * 50;
 
         this.CalculateTargetAngle(x, y);
-        this.MoveTowardsPoint(x, y, 10, deltaTime, room);
+        this.MoveTowardsPoint(x, y, deltaTime, room, otherCharacters);
     }
 
     DrawCharacter() {
@@ -38,7 +38,16 @@ export default class Player extends Character {
         this.ctx.arc(0, 0, this.CollisionRadius - 2, 0, Math.PI * 2);
         this.ctx.fill();
         this.ctx.closePath();
-        this.ctx.fillStyle = "black";
+
+        const grad = this.ctx.createLinearGradient(-20, 0, 20, 0);
+        console.log(this.CurrentHealth / this.Health);
+        
+        grad.addColorStop(0, "green");
+        grad.addColorStop(this.CurrentHealth / this.Health, "green");
+        grad.addColorStop(this.CurrentHealth / this.Health, "red");
+        grad.addColorStop(1, "red");
+
+        this.ctx.fillStyle = grad;
         this.ctx.fillRect(-20, -20, 40, 10);
     }
 

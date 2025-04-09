@@ -28,7 +28,8 @@ const roomGrid = [
     "00000000000000000000000000000000"
 ];
 
-const room = new Room(Canvas, ctx, roomGrid);
+const room = new Room(Canvas, ctx, roomGrid, "Imgs/forest.jpg");
+room.ChangeBackground();
 
 BeginPlay();
 
@@ -57,6 +58,11 @@ async function Tick() {
     Enemys.forEach(enemy => enemy.CalculateTargetAngle(player.x, player.y));
 
     const gameLoop = () => {
+        if (player.CurrentHealth <= 0) {
+            GameOver();
+            return;
+        }
+
         const CurrentTime = performance.now();
         const TimeSinceLastUpdate = CurrentTime - LastUpdateTime;
         DeltaTime = CurrentTime - LastTickTime;
@@ -67,10 +73,15 @@ async function Tick() {
             LastUpdateTime = CurrentTime;
         }
 
-        player.MovePlayer(DeltaTime, room, Enemys);
+        player.MovePlayer(DeltaTime, room);
         Enemys.forEach(enemy => enemy.MoveTowardsPlayer(player, DeltaTime, room, [player, ...Enemys]));
 
         requestAnimationFrame(gameLoop);
     };
     requestAnimationFrame(gameLoop);
+}
+
+function GameOver() {
+    document.getElementById("gameover").style.display = "block";
+    document.getElementById("gameover").style.animationName = "appear";
 }

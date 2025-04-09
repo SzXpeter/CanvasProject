@@ -1,9 +1,11 @@
 export default class Room {
-    constructor(canvas, ctx, grid) {
+    constructor(canvas, ctx, grid, background, walls) {
         this.Canvas = canvas;
         this.ctx = ctx;
         this.CellWidth = canvas.width / grid[0].length;
         this.CellHeight = canvas.height / grid.length;
+        this.Background = background;
+        this.Walls = walls;
 
         this.Grid = [];
         this.WallsX = [];
@@ -19,13 +21,20 @@ export default class Room {
             }
         });
     }
+
+    ChangeBackground() {
+        document.querySelector("canvas").style.backgroundImage = `url(${this.Background})`;
+    }
     
     DrawRoom() {
         this.ctx.fillStyle = 'black';
         this.Grid.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
                 if (cell === 1) {
-                    this.ctx.fillRect(colIndex * this.CellWidth, rowIndex * this.CellHeight, this.CellWidth, this.CellHeight);
+                    if (this.Walls == undefined)
+                        this.ctx.fillRect(colIndex * this.CellWidth, rowIndex * this.CellHeight, this.CellWidth, this.CellHeight);
+                    else 
+                        this.ctx.drawImage(this.Walls, colIndex * this.CellWidth, rowIndex * this.CellHeight, this.CellWidth, this.CellHeight);
                 }
             });
         });
