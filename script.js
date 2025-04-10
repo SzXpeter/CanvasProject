@@ -28,7 +28,7 @@ const roomGrid = [
     "00000000000000000000000000000000"
 ];
 
-const room = new Room(Canvas, ctx, roomGrid, "Imgs/forest.jpg");
+const room = new Room(Canvas, ctx, roomGrid);
 room.ChangeBackground();
 
 BeginPlay();

@@ -105,10 +105,10 @@ export default class Character {
         return this.angleToPoint * (180 / Math.PI) + 90;
     }
 
-    IsCollidingWithCharacter(nextX, nextY, otherCharacter) {
+    IsCollidingWithCharacter(nextX, nextY, otherCharacter, extraCollision = 0) {
         const dx = nextX - otherCharacter.x;
         const dy = nextY - otherCharacter.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        return distance < (otherCharacter.CollisionRadius + this.CollisionRadius);
+        return distance < (otherCharacter.CollisionRadius + this.CollisionRadius + extraCollision);
     }
 }

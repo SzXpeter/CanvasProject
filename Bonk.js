@@ -21,13 +21,12 @@ export default class Bonk extends Enemy {
     }
 
     Attack(player, room) {
-        if (this.IsCollidingWithCharacter(this.x + this.NextX, this.y + this.NextY, player)) {
+        if (this.IsCollidingWithCharacter(this.x, this.y, player, 10)) {
             player.CurrentHealth -= this.Damage;
             console.log("Player Health: " + player.CurrentHealth);
         }
         this.DrawAttack();
-        setTimeout(() => {this.ClearAttack()}, 150);
-        room.DrawRoom();
+        setTimeout(() => {this.ClearAttack(); room.DrawRoom();}, 150);
     }
 
     DrawCharacter() {
@@ -44,10 +43,10 @@ export default class Bonk extends Enemy {
         this.ctx.save();
         this.ctx.translate(this.x, this.y);
 
-        this.ctx.fillStyle = "rgba(255, 238, 0, 0.5)";
+        this.ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
         this.ctx.beginPath();
         this.ctx.arc(0, 0, this.CollisionRadius + 2, 0, Math.PI * 2, false);
-        this.ctx.arc(0, 0, this.CollisionRadius * 1.3 - 2, 0, Math.PI * 2, true);
+        this.ctx.arc(0, 0, this.CollisionRadius + 15, 0, Math.PI * 2, true);
         this.ctx.fill();
         this.ctx.closePath();
 
@@ -62,9 +61,9 @@ export default class Bonk extends Enemy {
         this.ctx.translate(this.x, this.y);
 
         this.ctx.beginPath();
-        this.ctx.arc(0, 0, this.CollisionRadius * 1.3, 0, Math.PI * 2);
+        this.ctx.arc(0, 0, this.CollisionRadius + 16, 0, Math.PI * 2);
         this.ctx.clip();
-        this.ctx.clearRect(-this.CollisionRadius * 1.3 + 1, -this.CollisionRadius * 1.3 + 1, this.CollisionRadius * 2.6 - 2, this.CollisionRadius * 2.6 - 2);
+        this.ctx.clearRect(-this.CollisionRadius - 16, -this.CollisionRadius - 16, this.CollisionRadius * 2.8 + 3, this.CollisionRadius * 2.8 + 3);
 
         this.ctx.restore();
     }
