@@ -1,52 +1,21 @@
 import Player from "./Player.js";
 import Bonk from "./Bonk.js";
 import Room from "./Room.js";
+import Floor from "./Floor.js";
+import roomGrid from "./roomGrid.js";
 
 const Canvas = document.querySelector("canvas");
 const ctx = Canvas.getContext('2d');
 
 const Enemys = [];
 const player = new Player(Canvas, ctx, 300, 100);
-const roomGrid = [
-    "00000000000000000000000000000000",
-    "00000000000000000000000000000000",
-    "00000000000000000000000000000000",
-    "00000000000000000000000000000000",
-    "00000000000000000000000000000000",
-    "00000000000000000000011111110000",
-    "00000000000000000000000000010000",
-    "00000000000000000000000000010000",
-    "00000000000000000000011110010200",
-    "00000000000000000000000010010000",
-    "00000000000000000000000010010000",
-    "00000000000000000000000010010000",
-    "00000000000000000000000010010000",
-    "00000000000000000000000000000000",
-    "00000000000000000000000000000000",
-    "00000000000000002000000000000000",
-    "00000000000000000000000000000000",
-    "00000000000000000000000000000000"
-];
 
-const room = new Room(Canvas, ctx, roomGrid);
-room.ChangeBackground();
 
-BeginPlay();
+// BeginPlay();
 
 async function BeginPlay() {
     ctx.clearRect(0, 0, Canvas.width, Canvas.height);
     player.SpawnCharacter(Canvas.width / 2, Canvas.height / 2);
-
-    room.Grid.forEach((row, rowIndex) => {
-        row.forEach((cell, colIndex) => {
-            if (cell === 2) {
-                const enemy = new Bonk(Canvas, ctx);
-                Enemys.push(enemy);
-                enemy.SpawnCharacter((colIndex + .5) * room.CellWidth, (rowIndex + .5) * room.CellHeight);
-            }
-        });
-    });
-    room.DrawRoom();
 
     Tick();
 }

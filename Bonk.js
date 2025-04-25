@@ -1,9 +1,10 @@
 import Enemy from "./Enemy.js";
 
 export default class Bonk extends Enemy {
-    constructor (canvas, ctx) {
+    constructor (canvas, ctx, attackColor = "rgba(255, 255, 255, 0.5)") {
         super(canvas, ctx, 200, 100, 15, 35, 1000);
         this.canAttack = true;
+        this.AttackColor = attackColor;
     }
 
     MoveTowardsPlayer(player, deltaTime, room, otherCharacters) {
@@ -43,7 +44,7 @@ export default class Bonk extends Enemy {
         this.ctx.save();
         this.ctx.translate(this.x, this.y);
 
-        this.ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+        this.ctx.fillStyle = this.AttackColor;
         this.ctx.beginPath();
         this.ctx.arc(0, 0, this.CollisionRadius + 2, 0, Math.PI * 2, false);
         this.ctx.arc(0, 0, this.CollisionRadius + 15, 0, Math.PI * 2, true);
