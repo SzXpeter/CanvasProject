@@ -40,7 +40,6 @@ export default class Player extends Character {
         this.ctx.closePath();
 
         const grad = this.ctx.createLinearGradient(-20, 0, 20, 0);
-        console.log(this.CurrentHealth / this.Health);
         
         grad.addColorStop(0, "green");
         grad.addColorStop(this.CurrentHealth / this.Health, "green");

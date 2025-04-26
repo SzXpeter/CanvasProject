@@ -1,5 +1,5 @@
 export default class Room {
-    constructor(canvas, ctx, grid, background, walls) {
+    constructor(canvas, ctx, grid, background, walls, enemyTypes = []) {
         this.Canvas = canvas;
         this.ctx = ctx;
         this.CellWidth = canvas.width / grid[0].length;
@@ -10,6 +10,18 @@ export default class Room {
         this.Grid = [];
         this.WallsX = [];
         this.WallsY = [];
+        this.EnemySpawnPositions = [];
+        this.EnemyCount = 0;
+
+        this.CreateGrid(grid);
+
+        this.EnemiesSpawned = false;
+        this.Iscleared = false;
+        this.EnemyTypes = enemyTypes;
+        this.Enemies = [];
+    }
+
+    CreateGrid(grid) {
         grid.forEach((element, i) => {
             this.Grid.push([]);
             for (let j = 0; j < element.length; j++) {
@@ -17,17 +29,21 @@ export default class Room {
                 if (this.Grid[i][j] === 1) {
                     this.WallsX.push(j);
                     this.WallsY.push(i);
+                } else if (this.Grid[i][j] === 2) {
+                    this.EnemySpawnPositions.push({
+                        x: j * this.CellWidth + this.CellWidth / 2,
+                        y: i * this.CellHeight + this.CellHeight / 2
+                    });
+                    this.EnemyCount++;
+                    this.Grid[i][j] = 0;
                 }
             }
         });
     }
-
-    ChangeBackground() {
-        document.querySelector("canvas").style.backgroundImage = `url(${this.Background})`;
-    }
     
     DrawRoom() {
         this.ctx.fillStyle = 'black';
+        document.querySelector("canvas").style.backgroundImage = `url(${this.Background})`;
         this.Grid.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
                 if (cell === 1) {
@@ -54,5 +70,46 @@ export default class Room {
                 }
         }
         return false;
+    }
+
+    SpawnEnemies() {
+        if (!this.Iscleared && !this.EnemiesSpawned) {
+            this.EnemiesSpawned = true;
+            this.EnemySpawnPositions.forEach(spawnPos => {
+                const randomEnemy = this.EnemyTypes[Math.floor(Math.random() * this.EnemyTypes.length)];
+                
+                const enemy = this.CopyEnemy(randomEnemy);
+                
+                enemy.SpawnCharacter(spawnPos.x, spawnPos.y);
+                this.Enemies.push(enemy);
+            });
+        }
+    }
+
+    CopyEnemy(enemy) {
+        const newEnemy = Object.create(
+            Object.getPrototypeOf(enemy),
+            Object.getOwnPropertyDescriptors(enemy)
+        );
+        newEnemy.Canvas = this.Canvas;
+        newEnemy.ctx = this.ctx;
+        return newEnemy;
+    }
+
+
+    UpdateRoomStatus() {
+        if (!this.Iscleared && this.EnemiesSpawned) {
+            // Remove dead enemies and get alive ones
+            this.Enemies = this.Enemies.filter(enemy => enemy.CurrentHealth > 0);
+            
+            if (this.Enemies.length < this.EnemyCount) {
+                this.DrawRoom();
+                this.EnemyCount = this.Enemies.length;
+            }
+
+            if (this.Enemies.length === 0) {
+                this.Iscleared = true;
+            }
+        }
     }
 }
