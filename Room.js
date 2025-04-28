@@ -16,10 +16,18 @@ export default class Room {
         this.CreateGrid(grid);
 
         this.EnemiesSpawned = false;
-        this.Iscleared = false;
         this.EnemyTypes = enemyTypes;
         this.Enemies = [];
-    }
+        this.Iscleared = false;
+
+        this.doors = {
+            up: false,
+            down: false,
+            left: false,
+            right: false
+        };
+        this.doorsEnabled = true;
+            }
 
     CreateGrid(grid) {
         grid.forEach((element, i) => {
@@ -32,10 +40,11 @@ export default class Room {
                 } else if (this.Grid[i][j] === 2) {
                     this.EnemySpawnPositions.push({
                         x: j * this.CellWidth + this.CellWidth / 2,
-                        y: i * this.CellHeight + this.CellHeight / 2
+                        y: i * this.CellHeight + this.CellHeight / 2,
+                        gridX: j,
+                        gridY: i
                     });
                     this.EnemyCount++;
-                    this.Grid[i][j] = 0;
                 }
             }
         });
@@ -54,6 +63,29 @@ export default class Room {
                 }
             });
         });
+
+        if (this.Iscleared && this.doorsEnabled) {
+            this.DrawDoors();
+        }
+    }
+
+    DrawDoors() {
+        const doorWidth = this.CellWidth * 3;
+        const doorHeight = this.CellHeight;
+        this.ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+
+        if (this.doors.up) {
+            this.ctx.fillRect(this.Canvas.width/2 - doorWidth/2, 0, doorWidth, doorHeight);
+        }
+        if (this.doors.down) {
+            this.ctx.fillRect(this.Canvas.width/2 - doorWidth/2, this.Canvas.height - doorHeight, doorWidth, doorHeight);
+        }
+        if (this.doors.left) {
+            this.ctx.fillRect(0, this.Canvas.height/2 - doorHeight/2, doorHeight, doorWidth);
+        }
+        if (this.doors.right) {
+            this.ctx.fillRect(this.Canvas.width - doorHeight, this.Canvas.height/2 - doorHeight/2, doorHeight, doorWidth);
+        }
     }
 
     IsCollidingWithWall(x, y, collisionRadius) {
@@ -72,17 +104,75 @@ export default class Room {
         return false;
     }
 
+    IsCollidingWithDoor(x, y, radius) {
+        if (!this.Iscleared || !this.doorsEnabled) return null;
+
+        const doorWidth = this.CellWidth * 3;
+        const doorHeight = this.CellHeight;
+
+        if (this.doors.up && 
+            x > this.Canvas.width/2 - doorWidth/2 && 
+            x < this.Canvas.width/2 + doorWidth/2 && 
+            y - radius < doorHeight) {
+            return 'up';
+        }
+        if (this.doors.down && 
+            x > this.Canvas.width/2 - doorWidth/2 && 
+            x < this.Canvas.width/2 + doorWidth/2 && 
+            y + radius > this.Canvas.height - doorHeight) {
+            return 'down';
+        }
+        if (this.doors.left && 
+            y > this.Canvas.height/2 - doorHeight/2 && 
+            y < this.Canvas.height/2 + doorHeight/2 && 
+            x - radius < doorHeight) {
+            return 'left';
+        }
+        if (this.doors.right && 
+            y > this.Canvas.height/2 - doorHeight/2 && 
+            y < this.Canvas.height/2 + doorHeight/2 && 
+            x + radius > this.Canvas.width - doorHeight) {
+            return 'right';
+        }
+        return null;
+    }
+
+    DisableDoors() {
+        this.doorsEnabled = false;
+        setTimeout(() => {
+            this.doorsEnabled = true;
+            this.DrawRoom();
+        }, 2000);
+    }
+
+    ClearEnemies() {
+        this.Enemies.forEach(enemy => enemy.Clear());
+        this.Enemies = [];
+        this.EnemiesSpawned = false;
+    }
+
+    DisableEnemies() {
+        this.Enemies.forEach(enemy => enemy.canMove = false);
+        setTimeout(() => {
+            this.Enemies.forEach(enemy => enemy.canMove = true);
+        }, 200);
+    }
+
     SpawnEnemies() {
         if (!this.Iscleared && !this.EnemiesSpawned) {
-            this.EnemiesSpawned = true;
+            console.log("Spawning enemies...");
+            this.ClearEnemies();
             this.EnemySpawnPositions.forEach(spawnPos => {
                 const randomEnemy = this.EnemyTypes[Math.floor(Math.random() * this.EnemyTypes.length)];
-                
                 const enemy = this.CopyEnemy(randomEnemy);
-                
                 enemy.SpawnCharacter(spawnPos.x, spawnPos.y);
+                
                 this.Enemies.push(enemy);
+                this.Grid[spawnPos.gridY][spawnPos.gridX] = 0;
             });
+            this.EnemiesSpawned = true;
+            this.DisableEnemies();
+            this.DrawRoom();
         }
     }
 
@@ -96,19 +186,19 @@ export default class Room {
         return newEnemy;
     }
 
-
     UpdateRoomStatus() {
         if (!this.Iscleared && this.EnemiesSpawned) {
-            // Remove dead enemies and get alive ones
+
             this.Enemies = this.Enemies.filter(enemy => enemy.CurrentHealth > 0);
             
             if (this.Enemies.length < this.EnemyCount) {
                 this.DrawRoom();
                 this.EnemyCount = this.Enemies.length;
             }
-
+            
             if (this.Enemies.length === 0) {
                 this.Iscleared = true;
+                                this.DrawRoom();
             }
         }
     }

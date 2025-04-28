@@ -20,7 +20,7 @@ const RoomGrids = [
             "00000000000000000000000000000000",
             "00000000000000000000000000000000",
         ],
-        backgroundTexture: "imgs/backgrounds/Floor1Start.jpg",
+        backgroundTexture: undefined,
         wallTexture: undefined
     },
     {
@@ -46,7 +46,7 @@ const RoomGrids = [
         ],
         backgroundTexture: undefined,
         wallTexture: undefined
-    }
+    },
 ];
 
 export default RoomGrids;

@@ -9,6 +9,7 @@ export default class Floor {
         this.currentY = 0;
 
         this.GenerateFloor();
+        this.UpdateAllDoors();
     }
 
     GenerateFloor() {
@@ -21,7 +22,6 @@ export default class Floor {
         this.currentX = x;
         this.currentY = y;
         
-        // Place first room
         this.Rooms[y][x] = this.CopyRoom(this.RoomTemplates[0]);
         let roomCount = 1;
 
@@ -39,13 +39,36 @@ export default class Floor {
 
             if (!this.Rooms[y][x]) {
                 const randomTemplate = this.RoomTemplates[
-                    Math.floor(Math.random() * (this.RoomTemplates.length - 1)) + 1
+                    Math.floor(Math.random() * (this.RoomTemplates.length - 1) + 1)
                 ];
                 this.Rooms[y][x] = this.CopyRoom(randomTemplate);
                 roomCount++;
             }
         }
     }
+
+    UpdateAllDoors() {
+        for (let y = 0; y < this.Rooms.length; y++) {
+            for (let x = 0; x < this.Rooms[y].length; x++) {
+                if (this.Rooms[y][x]) {
+                    const savedX = this.currentX;
+                    const savedY = this.currentY;
+                    this.currentX = x;
+                    this.currentY = y;
+                    
+                    const room = this.Rooms[y][x];
+                    room.doors.up = this.HasRoomInDirection('up');
+                    room.doors.down = this.HasRoomInDirection('down');
+                    room.doors.left = this.HasRoomInDirection('left');
+                    room.doors.right = this.HasRoomInDirection('right');
+                    
+                    this.currentX = savedX;
+                    this.currentY = savedY;
+                }
+            }
+        }
+    }
+
 
     CopyRoom(roomTemplate) {
         const room = new Room(
@@ -56,6 +79,8 @@ export default class Floor {
             roomTemplate.Walls,
             roomTemplate.EnemyTypes
         );
+        room.Grid = roomTemplate.Grid.map(row => [...row]);
+        room.EnemyTypes = [...this.RoomTemplates[0].EnemyTypes];
         return room;
     }
 
@@ -65,12 +90,22 @@ export default class Floor {
         const newX = this.currentX + (direction === 'right' ? 1 : direction === 'left' ? -1 : 0);
         const newY = this.currentY + (direction === 'down' ? 1 : direction === 'up' ? -1 : 0);
         
+        this.Rooms[this.currentY][this.currentX].DisableDoors();
         this.currentX = newX;
         this.currentY = newY;
+
+        this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
+        console.log(this.GetCurrentRoom());
+        
         return true;
     }
     
     CanMoveToRoom(direction) {
+        return this.HasRoomInDirection(direction) && 
+               this.Rooms[this.currentY][this.currentX].Iscleared;
+    }
+
+    HasRoomInDirection(direction) {
         const newX = this.currentX + (direction === 'right' ? 1 : direction === 'left' ? -1 : 0);
         const newY = this.currentY + (direction === 'down' ? 1 : direction === 'up' ? -1 : 0);
         
@@ -78,8 +113,7 @@ export default class Floor {
                newX < this.Rooms[0].length &&
                newY >= 0 && 
                newY < this.Rooms.length &&
-               this.Rooms[newY][newX] !== null &&
-               this.Rooms[newY][newX].Iscleared;
+               this.Rooms[newY][newX] != null;
     }
 
     GetCurrentRoom() {

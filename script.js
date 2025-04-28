@@ -1,13 +1,15 @@
 import Player from "./Player.js";
 import Floor from "./Floor.js";
-import Room from "./Room.js";
+import Bonk from "./Bonk.js";
 import { CreateRoomTemplates } from "./RoomTemplates.js";
 
 const Canvas = document.querySelector("canvas");
 const ctx = Canvas.getContext('2d');
 
 const player = new Player(Canvas, ctx, 300, 100);
-let CurrentRoom = 0;
+const bonk = new Bonk(Canvas, ctx, 300, 100);
+let CurrentRoom = undefined;
+let CurrentFloor = undefined;
 
 BeginPlay();
 
@@ -15,9 +17,13 @@ async function BeginPlay() {
     ctx.clearRect(0, 0, Canvas.width, Canvas.height);
     player.SpawnCharacter(Canvas.width / 2, Canvas.height / 2);
 
-    const roomTemplates = CreateRoomTemplates(Canvas, ctx);
+    const roomTemplates = CreateRoomTemplates(Canvas, ctx, [bonk]);
+    
     const floor = new Floor(Canvas, ctx, roomTemplates);
-    CurrentRoom = floor.GetCurrentRoom();
+    CurrentFloor = floor;
+    CurrentRoom = CurrentFloor.GetCurrentRoom();
+    console.log(floor.Rooms);
+
     CurrentRoom.DrawRoom();
 
     Tick();
@@ -50,8 +56,24 @@ async function Tick() {
             });
             LastUpdateTime = CurrentTime;
         }
-
         player.MovePlayer(DeltaTime, CurrentRoom);
+
+        const doorHit = CurrentRoom.IsCollidingWithDoor(player.x, player.y, player.CollisionRadius);
+        if (doorHit) {
+            if (CurrentFloor.MoveToRoom(doorHit)) {
+                CurrentRoom = CurrentFloor.GetCurrentRoom();
+                player.SpawnCharacter(
+                    doorHit === 'left' ? Canvas.width - player.CollisionRadius * 2 :
+                    doorHit === 'right' ? player.CollisionRadius * 2 :
+                    Canvas.width/2,
+                    doorHit === 'up' ? Canvas.height - player.CollisionRadius * 2 :
+                    doorHit === 'down' ? player.CollisionRadius * 2 :
+                    Canvas.height/2
+                );
+                CurrentRoom.DrawRoom();
+            }
+        }
+
         CurrentRoom.Enemies.forEach(enemy => {
             if (enemy.CurrentHealth > 0) {
                 enemy.MoveTowardsPlayer(player, DeltaTime, CurrentRoom, [player, ...CurrentRoom.Enemies]);
