@@ -31,12 +31,19 @@ export default class Bonk extends Enemy {
     }
 
     DrawCharacter() {
-        this.ctx.fillStyle = "red";
+        this.ctx.fillStyle = "darkgray";
         this.ctx.beginPath();
         this.ctx.arc(0, 0, this.CollisionRadius - 2, 0, Math.PI * 2);
         this.ctx.fill();
         this.ctx.closePath();
-        this.ctx.fillStyle = "black";
+
+        const grad = this.ctx.createLinearGradient(-20, 0, 20, 0);
+        grad.addColorStop(0, "green");
+        grad.addColorStop(this.CurrentHealth / this.Health, "green");
+        grad.addColorStop(this.CurrentHealth / this.Health, "red");
+        grad.addColorStop(1, "red");
+
+        this.ctx.fillStyle = grad;
         this.ctx.fillRect(-20, -20, 40, 10);
     }
 
@@ -50,9 +57,6 @@ export default class Bonk extends Enemy {
         this.ctx.arc(0, 0, this.CollisionRadius + 15, 0, Math.PI * 2, true);
         this.ctx.fill();
         this.ctx.closePath();
-
-        this.ctx.fillStyle = "black";
-        this.ctx.fillRect(-20, -20, 40, 10);
 
         this.ctx.restore();
     }
