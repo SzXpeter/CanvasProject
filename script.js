@@ -1,13 +1,16 @@
 import Player from "./Player.js";
 import Floor from "./Floor.js";
 import Bonk from "./Bonk.js";
+import Ranger from "./Ranger.js";
 import { CreateRoomTemplates } from "./RoomTemplates.js";
 
 const Canvas = document.querySelector("canvas");
 const ctx = Canvas.getContext('2d');
 
 const player = new Player(Canvas, ctx, 300, 100);
-const bonk = new Bonk(Canvas, ctx, 300, 100);
+const bonk = new Bonk(Canvas, ctx);
+const ranger = new Ranger(Canvas, ctx);
+
 let CurrentRoom = undefined;
 let CurrentFloor = undefined;
 
@@ -17,7 +20,7 @@ async function BeginPlay() {
     ctx.clearRect(0, 0, Canvas.width, Canvas.height);
     player.SpawnCharacter(Canvas.width / 2, Canvas.height / 2);
 
-    const roomTemplates = CreateRoomTemplates(Canvas, ctx, [bonk]);
+    const roomTemplates = CreateRoomTemplates(Canvas, ctx, [bonk, ranger]);
     
     const floor = new Floor(Canvas, ctx, roomTemplates);
     CurrentFloor = floor;
