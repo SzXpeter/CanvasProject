@@ -83,10 +83,10 @@ export default class Room {
             this.ctx.fillRect(this.Canvas.width/2 - doorWidth/2, this.Canvas.height - doorHeight, doorWidth, doorHeight);
         }
         if (this.doors.left) {
-            this.ctx.fillRect(0, this.Canvas.height/2 - doorHeight/2, doorHeight, doorWidth);
+            this.ctx.fillRect(0, this.Canvas.height/2 - doorWidth/2, doorHeight, doorWidth);
         }
         if (this.doors.right) {
-            this.ctx.fillRect(this.Canvas.width - doorHeight, this.Canvas.height/2 - doorHeight/2, doorHeight, doorWidth);
+            this.ctx.fillRect(this.Canvas.width - doorHeight, this.Canvas.height/2 - doorWidth/2, doorHeight, doorWidth);
         }
     }
 
