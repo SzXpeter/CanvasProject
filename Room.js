@@ -51,6 +51,7 @@ export default class Room {
     }
     
     DrawRoom() {
+        this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
         this.ctx.fillStyle = 'black';
         document.querySelector("canvas").style.backgroundImage = `url(${this.Background})`;
         this.Grid.forEach((row, rowIndex) => {
@@ -64,6 +65,7 @@ export default class Room {
             });
         });
 
+        console.log(this.Iscleared);
         if (this.Iscleared && this.doorsEnabled) {
             this.DrawDoors();
         }
@@ -198,7 +200,7 @@ export default class Room {
             
             if (this.Enemies.length === 0) {
                 this.Iscleared = true;
-                                this.DrawRoom();
+                this.DrawRoom();
             }
         }
     }

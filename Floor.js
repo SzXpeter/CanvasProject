@@ -90,9 +90,9 @@ export default class Floor {
         const newX = this.currentX + (direction === 'right' ? 1 : direction === 'left' ? -1 : 0);
         const newY = this.currentY + (direction === 'down' ? 1 : direction === 'up' ? -1 : 0);
         
-        this.Rooms[this.currentY][this.currentX].DisableDoors();
         this.currentX = newX;
         this.currentY = newY;
+        this.Rooms[this.currentY][this.currentX].DisableDoors();
 
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
         console.log(this.GetCurrentRoom());
