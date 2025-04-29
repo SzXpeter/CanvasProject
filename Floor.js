@@ -1,26 +1,29 @@
 import Room from './Room.js';
 
 export default class Floor {
-    constructor(canvas, ctx, roomTemplates) {
+    constructor(canvas, ctx, roomTemplates, boss) {
         this.Canvas = canvas;
         this.ctx = ctx;
         this.RoomTemplates = roomTemplates;
-        this.currentX = 0;
-        this.currentY = 0;
+        this.CurrentX = 0;
+        this.CurrentY = 0;
+        this.BossRoom = null;
+        this.Boss = boss;
 
         this.GenerateFloor();
+        this.AddBossRoom();
         this.UpdateAllDoors();
     }
 
     GenerateFloor() {
-        const gridSize = 7;
+        const gridSize = 6;
         const targetRoomCount = Math.floor(gridSize * gridSize * (0.2 + Math.random() * 0.1));
         this.Rooms = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
 
         let x = Math.floor(gridSize / 2);
         let y = Math.floor(gridSize / 2);
-        this.currentX = x;
-        this.currentY = y;
+        this.CurrentX = x;
+        this.CurrentY = y;
         
         this.Rooms[y][x] = this.CopyRoom(this.RoomTemplates[0]);
         let roomCount = 1;
@@ -39,7 +42,7 @@ export default class Floor {
 
             if (!this.Rooms[y][x]) {
                 const randomTemplate = this.RoomTemplates[
-                    Math.floor(Math.random() * (this.RoomTemplates.length - 1) + 1)
+                    Math.floor(Math.random() * (this.RoomTemplates.length - 2) + 1)
                 ];
                 this.Rooms[y][x] = this.CopyRoom(randomTemplate);
                 roomCount++;
@@ -47,14 +50,33 @@ export default class Floor {
         }
     }
 
+    AddBossRoom() {
+        let furthestRoom = { x: this.CurrentX, y: this.CurrentY, dist: 0 };
+        
+        for (let y = 0; y < this.Rooms.length; y++) {
+            for (let x = 0; x < this.Rooms[y].length; x++) {
+                if (this.Rooms[y][x]) {
+                    const dist = Math.abs(x - this.CurrentX) + Math.abs(y - this.CurrentY);
+                    if (dist > furthestRoom.dist) {
+                        furthestRoom = { x, y, dist };
+                    }
+                }
+            }
+        }
+        
+        this.BossRoom = { x: furthestRoom.x, y: furthestRoom.y };
+        this.Rooms[furthestRoom.y][furthestRoom.x] = this.CopyRoom(this.RoomTemplates[this.RoomTemplates.length - 1]);
+        this.Rooms[furthestRoom.y][furthestRoom.x].EnemyTypes = [this.Boss];
+    }
+
     UpdateAllDoors() {
         for (let y = 0; y < this.Rooms.length; y++) {
             for (let x = 0; x < this.Rooms[y].length; x++) {
                 if (this.Rooms[y][x]) {
-                    const savedX = this.currentX;
-                    const savedY = this.currentY;
-                    this.currentX = x;
-                    this.currentY = y;
+                    const savedX = this.CurrentX;
+                    const savedY = this.CurrentY;
+                    this.CurrentX = x;
+                    this.CurrentY = y;
                     
                     const room = this.Rooms[y][x];
                     room.doors.up = this.HasRoomInDirection('up');
@@ -62,13 +84,12 @@ export default class Floor {
                     room.doors.left = this.HasRoomInDirection('left');
                     room.doors.right = this.HasRoomInDirection('right');
                     
-                    this.currentX = savedX;
-                    this.currentY = savedY;
+                    this.CurrentX = savedX;
+                    this.CurrentY = savedY;
                 }
             }
         }
     }
-
 
     CopyRoom(roomTemplate) {
         const room = new Room(
@@ -87,12 +108,12 @@ export default class Floor {
     MoveToRoom(direction) {
         if (!this.CanMoveToRoom(direction)) return false;
         
-        const newX = this.currentX + (direction === 'right' ? 1 : direction === 'left' ? -1 : 0);
-        const newY = this.currentY + (direction === 'down' ? 1 : direction === 'up' ? -1 : 0);
+        const newX = this.CurrentX + (direction === 'right' ? 1 : direction === 'left' ? -1 : 0);
+        const newY = this.CurrentY + (direction === 'down' ? 1 : direction === 'up' ? -1 : 0);
         
-        this.currentX = newX;
-        this.currentY = newY;
-        this.Rooms[this.currentY][this.currentX].DisableDoors();
+        this.CurrentX = newX;
+        this.CurrentY = newY;
+        this.Rooms[this.CurrentY][this.CurrentX].DisableDoors();
 
         this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
         console.log(this.GetCurrentRoom());
@@ -102,12 +123,12 @@ export default class Floor {
     
     CanMoveToRoom(direction) {
         return this.HasRoomInDirection(direction) && 
-               this.Rooms[this.currentY][this.currentX].Iscleared;
+               this.Rooms[this.CurrentY][this.CurrentX].Iscleared;
     }
 
     HasRoomInDirection(direction) {
-        const newX = this.currentX + (direction === 'right' ? 1 : direction === 'left' ? -1 : 0);
-        const newY = this.currentY + (direction === 'down' ? 1 : direction === 'up' ? -1 : 0);
+        const newX = this.CurrentX + (direction === 'right' ? 1 : direction === 'left' ? -1 : 0);
+        const newY = this.CurrentY + (direction === 'down' ? 1 : direction === 'up' ? -1 : 0);
         
         return newX >= 0 && 
                newX < this.Rooms[0].length &&
@@ -117,6 +138,6 @@ export default class Floor {
     }
 
     GetCurrentRoom() {
-        return this.Rooms[this.currentY][this.currentX];
+        return this.Rooms[this.CurrentY][this.CurrentX];
     }
 }

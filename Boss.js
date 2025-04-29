@@ -3,7 +3,7 @@ import Bullet from "./Bullet.js";
 
 export default class Boss extends Enemy {
     constructor(canvas, ctx) {
-        super(canvas, ctx, 150, 500, 25, 50, 2000);
+        super(canvas, ctx, 250, 500, 25, 50, 2000);
         this.Bullets = [];
         this.canAttack = true;
         this.attackPhase = 'approach';
@@ -35,7 +35,7 @@ export default class Boss extends Enemy {
         }
 
         this.phaseTimer += deltaTime;
-        this.UpdatePhase(distToPlayer);
+        this.UpdatePhase();
         
         let targetX = this.x;
         let targetY = this.y;
@@ -69,7 +69,7 @@ export default class Boss extends Enemy {
         );
     }
 
-    UpdatePhase(distToPlayer) {
+    UpdatePhase() {
         if (this.phaseTimer < 3000) return;
         
         this.phaseTimer = 0;

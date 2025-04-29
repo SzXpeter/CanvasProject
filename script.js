@@ -2,7 +2,8 @@ import Player from "./Player.js";
 import Floor from "./Floor.js";
 import Bonk from "./Bonk.js";
 import Ranger from "./Ranger.js";
-import { CreateRoomTemplates } from "./RoomTemplates.js";
+import Boss from "./Boss.js";
+import CreateRoomTemplates from "./RoomTemplates.js";
 
 const Canvas = document.querySelector("canvas");
 const ctx = Canvas.getContext('2d');
@@ -10,6 +11,7 @@ const ctx = Canvas.getContext('2d');
 const player = new Player(Canvas, ctx, 300, 100);
 const bonk = new Bonk(Canvas, ctx);
 const ranger = new Ranger(Canvas, ctx);
+const boss = new Boss(Canvas, ctx);
 
 let CurrentRoom = undefined;
 let CurrentFloor = undefined;
@@ -22,10 +24,9 @@ async function BeginPlay() {
 
     const roomTemplates = CreateRoomTemplates(Canvas, ctx, [bonk, ranger]);
     
-    const floor = new Floor(Canvas, ctx, roomTemplates);
+    const floor = new Floor(Canvas, ctx, roomTemplates, boss);
     CurrentFloor = floor;
     CurrentRoom = CurrentFloor.GetCurrentRoom();
-    console.log(floor.Rooms);
 
     CurrentRoom.DrawRoom();
 
@@ -98,7 +99,6 @@ async function Tick() {
 }
 
 function GameOver() {
-    console.log("Game Over!");
     document.getElementById("gameover").style.display = "block";
     document.getElementById("gameover").style.animationName = "appear";
 }

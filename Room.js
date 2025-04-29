@@ -27,7 +27,7 @@ export default class Room {
             right: false
         };
         this.doorsEnabled = true;
-            }
+    }
 
     CreateGrid(grid) {
         grid.forEach((element, i) => {
@@ -65,7 +65,6 @@ export default class Room {
             });
         });
 
-        console.log(this.Iscleared);
         if (this.Iscleared && this.doorsEnabled) {
             this.DrawDoors();
         }
@@ -162,7 +161,6 @@ export default class Room {
 
     SpawnEnemies() {
         if (!this.Iscleared && !this.EnemiesSpawned) {
-            console.log("Spawning enemies...");
             this.ClearEnemies();
             this.EnemySpawnPositions.forEach(spawnPos => {
                 const randomEnemy = this.EnemyTypes[Math.floor(Math.random() * this.EnemyTypes.length)];
