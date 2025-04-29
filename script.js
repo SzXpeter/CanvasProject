@@ -8,7 +8,7 @@ import CreateRoomTemplates from "./RoomTemplates.js";
 const Canvas = document.querySelector("canvas");
 const ctx = Canvas.getContext('2d');
 
-const player = new Player(Canvas, ctx, 300, 100);
+const player = new Player(Canvas, ctx, 300, 150);
 const bonk = new Bonk(Canvas, ctx);
 const ranger = new Ranger(Canvas, ctx);
 const boss = new Boss(Canvas, ctx);
@@ -41,6 +41,11 @@ async function Tick() {
     const GameLoop = () => {
         if (player.CurrentHealth <= 0) {
             GameOver();
+            return;
+        }
+
+        if (CurrentRoom === CurrentFloor.Rooms[CurrentFloor.BossRoom.y][CurrentFloor.BossRoom.x] && CurrentRoom.Iscleared) {
+            WinGame();
             return;
         }
         
@@ -101,4 +106,9 @@ async function Tick() {
 function GameOver() {
     document.getElementById("gameover").style.display = "block";
     document.getElementById("gameover").style.animationName = "appear";
+}
+
+function WinGame() {
+    document.getElementById("winscreen").style.display = "block";
+    document.getElementById("winscreen").style.animationName = "appear";
 }
