@@ -59,6 +59,15 @@ async function Tick() {
             });
             LastUpdateTime = CurrentTime;
         }
+
+        player.Bullets = player.GetBullets().filter(bullet => 
+            bullet.Update(DeltaTime, CurrentRoom, [player, ...CurrentRoom.Enemies])
+        );
+        
+        if (CurrentRoom.Iscleared && CurrentRoom.doorsEnabled) {
+            CurrentRoom.DrawDoors();
+        }
+
         player.MovePlayer(DeltaTime, CurrentRoom);
 
         const doorHit = CurrentRoom.IsCollidingWithDoor(player.x, player.y, player.CollisionRadius);
@@ -89,6 +98,7 @@ async function Tick() {
 }
 
 function GameOver() {
+    console.log("Game Over!");
     document.getElementById("gameover").style.display = "block";
     document.getElementById("gameover").style.animationName = "appear";
 }

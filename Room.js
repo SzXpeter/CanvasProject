@@ -144,7 +144,7 @@ export default class Room {
         setTimeout(() => {
             this.doorsEnabled = true;
             this.DrawRoom();
-        }, 2000);
+        }, 1000);
     }
 
     ClearEnemies() {
