@@ -2,7 +2,7 @@ import Character from "./Character.js";
 
 export default class Bullet extends Character {
     constructor(canvas, ctx, damage = 10, speed = 800) {
-        super(canvas, ctx, speed, 1, 5);
+        super(canvas, ctx, speed, 1, 7);
         this.Damage = damage;
         this.Direction = { x: 0, y: 0 };
     }
@@ -37,9 +37,9 @@ export default class Bullet extends Character {
     }
 
     DrawCharacter() {
-        this.ctx.fillStyle = "yellow";
+        this.ctx.fillStyle = "darkgray";
         this.ctx.beginPath();
-        this.ctx.arc(0, 0, this.CollisionRadius - 1.2, 0, Math.PI * 2);
+        this.ctx.arc(0, 0, this.CollisionRadius - 1.5, 0, Math.PI * 2);
         this.ctx.fill();
         this.ctx.closePath();
     }

@@ -3,7 +3,7 @@ import Bullet from "./Bullet.js";
 
 export default class Player extends Character {
     constructor(canvas, ctx, speed = 1, health = 100) {
-        super(canvas, ctx, speed, health, 43.84);
+        super(canvas, ctx, speed, health, 43.84); //43.84
         this.pressedKeys = new Set();
 
         window.addEventListener('keydown', (event) => this.pressedKeys.add(event.key));

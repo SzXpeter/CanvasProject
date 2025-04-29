@@ -65,7 +65,7 @@ export default class Ranger extends Enemy {
 
         fireBullet();
     }
-
+    
     DrawCharacter() {
         this.ctx.fillStyle = "orange";
         this.ctx.beginPath();
@@ -74,12 +74,28 @@ export default class Ranger extends Enemy {
         this.ctx.closePath();
 
         const grad = this.ctx.createLinearGradient(-20, 0, 20, 0);
+        const healthPercentage = this.CurrentHealth / this.Health;
         grad.addColorStop(0, "green");
-        grad.addColorStop(this.CurrentHealth / this.Health, "green");
-        grad.addColorStop(this.CurrentHealth / this.Health, "red");
+        grad.addColorStop(healthPercentage < 0 ? 0 : healthPercentage, "green");
+        grad.addColorStop(healthPercentage < 0 ? 0 : healthPercentage, "red");
         grad.addColorStop(1, "red");
 
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(-5, -this.CollisionRadius + 2, 10, 28);
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(-5, -10);
+        this.ctx.lineTo(-15, 0);
+        this.ctx.lineTo(-5, 0);
+        this.ctx.fill();
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(5, -10);
+        this.ctx.lineTo(15, 0);
+        this.ctx.lineTo(5, 0);
+        this.ctx.fill();
+
         this.ctx.fillStyle = grad;
-        this.ctx.fillRect(-20, -20, 40, 10);
+        this.ctx.fillRect(-20, 0, 40, 10);
     }
 }

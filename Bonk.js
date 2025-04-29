@@ -2,7 +2,7 @@ import Enemy from "./Enemy.js";
 
 export default class Bonk extends Enemy {
     constructor (canvas, ctx, attackColor = "rgba(255, 255, 255, 0.5)") {
-        super(canvas, ctx, 200, 100, 15, 35, 1000);
+        super(canvas, ctx, 275, 100, 15, 35, 1000);
         this.canAttack = true;
         this.AttackColor = attackColor;
     }
@@ -29,7 +29,7 @@ export default class Bonk extends Enemy {
         this.DrawAttack();
         setTimeout(() => {this.ClearAttack(); room.DrawRoom();}, 150);
     }
-
+    
     DrawCharacter() {
         this.ctx.fillStyle = "darkgray";
         this.ctx.beginPath();
@@ -38,13 +38,47 @@ export default class Bonk extends Enemy {
         this.ctx.closePath();
 
         const grad = this.ctx.createLinearGradient(-20, 0, 20, 0);
+        const healthPercentage = this.CurrentHealth / this.Health;
         grad.addColorStop(0, "green");
-        grad.addColorStop(this.CurrentHealth / this.Health, "green");
-        grad.addColorStop(this.CurrentHealth / this.Health, "red");
+        grad.addColorStop(healthPercentage < 0 ? 0 : healthPercentage, "green");
+        grad.addColorStop(healthPercentage < 0 ? 0 : healthPercentage, "red");
         grad.addColorStop(1, "red");
 
+        this.ctx.strokewidth = 2;
+        this.ctx.strokeStyle = "black";
+
+        this.ctx.beginPath();
+        this.ctx.arc(0, -50, 40, Math.PI * .72, Math.PI * .28, true);
+        this.ctx.stroke();
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(-15, -29);
+        this.ctx.lineTo(-15, -12);
+        this.ctx.stroke();
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(-7.5, -32);
+        this.ctx.lineTo(-7.5, -11);
+        this.ctx.stroke();
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, -33);
+        this.ctx.lineTo(0, -10);
+        this.ctx.stroke();
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(7.5, -32);
+        this.ctx.lineTo(7.5, -11);
+        this.ctx.stroke();
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(15, -29);
+        this.ctx.lineTo(15, -12);
+        this.ctx.stroke();
+
+
         this.ctx.fillStyle = grad;
-        this.ctx.fillRect(-20, -20, 40, 10);
+        this.ctx.fillRect(-20, -5, 40, 10);
     }
 
     DrawAttack() {
